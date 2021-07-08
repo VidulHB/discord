@@ -467,7 +467,7 @@ declare module 'discord.js' {
     public deferred: boolean;
     public options: Collection<string, CommandInteractionOption>;
     public replied: boolean;
-    public webhook: InteractionWebhook;
+    public webhook: WebhookClient;
     public defer(options?: InteractionDeferOptions): Promise<void>;
     public deleteReply(): Promise<void>;
     public editReply(
@@ -1139,30 +1139,6 @@ declare module 'discord.js' {
     public isMessageComponent(): this is MessageComponentInteraction;
   }
 
-  export class InteractionWebhook extends PartialWebhookMixin() {
-    constructor(client: Client, id: Snowflake, token: string);
-    public token: string;
-    public send(
-      content: string | (InteractionReplyOptions & { split?: false }) | MessageAdditions,
-    ): Promise<Message | RawMessage>;
-    public send(options: InteractionReplyOptions & { split: true | SplitOptions }): Promise<(Message | RawMessage)[]>;
-    public send(
-      options: InteractionReplyOptions | APIMessage,
-    ): Promise<Message | RawMessage | (Message | RawMessage)[]>;
-    public send(
-      content: string | null,
-      options: (InteractionReplyOptions & { split?: false }) | MessageAdditions,
-    ): Promise<Message | RawMessage>;
-    public send(
-      content: string | null,
-      options: InteractionReplyOptions & { split: true | SplitOptions },
-    ): Promise<(Message | RawMessage)[]>;
-    public send(
-      content: string | null,
-      options: InteractionReplyOptions,
-    ): Promise<Message | RawMessage | (Message | RawMessage)[]>;
-  }
-
   export class Invite extends Base {
     constructor(client: Client, data: unknown);
     public channel: GuildChannel | PartialGroupDMChannel;
@@ -1352,12 +1328,11 @@ declare module 'discord.js' {
   }
 
   export class MessageComponentInteraction extends Interaction {
-    public componentType: MessageComponentType;
     public customID: string;
     public deferred: boolean;
     public message: Message | RawMessage;
     public replied: boolean;
-    public webhook: InteractionWebhook;
+    public webhook: WebhookClient;
     public defer(options?: InteractionDeferOptions): Promise<void>;
     public deferUpdate(): Promise<void>;
     public deleteReply(): Promise<void>;
@@ -2522,15 +2497,18 @@ declare module 'discord.js' {
     stopTyping(force?: boolean): void;
   }
 
-  function PartialWebhookMixin<T>(Base?: Constructable<T>): Constructable<T & PartialWebhookFields>;
   function WebhookMixin<T>(Base?: Constructable<T>): Constructable<T & WebhookFields>;
 
   function VolumeMixin<T>(base: Constructable<T>): Constructable<T & VolumeInterface>;
 
-  interface PartialWebhookFields {
+  interface WebhookFields {
     id: Snowflake;
+    readonly createdAt: Date;
+    readonly createdTimestamp: number;
     readonly url: string;
+    delete(reason?: string): Promise<void>;
     deleteMessage(message: MessageResolvable | '@original'): Promise<void>;
+    edit(options: WebhookEditData): Promise<Webhook>;
     editMessage(
       message: MessageResolvable | '@original',
       content: string | null | APIMessage | MessageAdditions,
@@ -2558,14 +2536,7 @@ declare module 'discord.js' {
       content: string | null,
       options: WebhookMessageOptions,
     ): Promise<Message | RawMessage | (Message | RawMessage)[]>;
-  }
-
-  interface WebhookFields extends PartialWebhookFields {
-    readonly createdAt: Date;
-    readonly createdTimestamp: number;
-    delete(reason?: string): Promise<void>;
-    edit(options: WebhookEditData): Promise<Webhook>;
-    sendSlackMessage(body: object): Promise<boolean>;
+    sendSlackMessage(body: unknown): Promise<boolean>;
   }
 
   //#endregion
@@ -3560,7 +3531,6 @@ declare module 'discord.js' {
 
   type MessageTarget =
     | Interaction
-    | InteractionWebhook
     | TextChannel
     | NewsChannel
     | DMChannel

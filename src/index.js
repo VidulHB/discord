@@ -91,7 +91,6 @@ module.exports = {
   Integration: require('./structures/Integration'),
   IntegrationApplication: require('./structures/IntegrationApplication'),
   Interaction: require('./structures/Interaction'),
-  InteractionWebhook: require('./structures/InteractionWebhook'),
   Invite: require('./structures/Invite'),
   Message: require('./structures/Message'),
   MessageActionRow: require('./structures/MessageActionRow'),

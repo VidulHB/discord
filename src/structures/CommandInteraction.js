@@ -1,8 +1,8 @@
 'use strict';
 
 const Interaction = require('./Interaction');
-const InteractionWebhook = require('./InteractionWebhook');
 const InteractionResponses = require('./interfaces/InteractionResponses');
+const WebhookClient = require('../client/WebhookClient');
 const Collection = require('../util/Collection');
 const { ApplicationCommandOptionTypes } = require('../util/Constants');
 
@@ -53,10 +53,10 @@ class CommandInteraction extends Interaction {
     this.replied = false;
 
     /**
-     * An associated interaction webhook, can be used to further interact with this interaction
-     * @type {InteractionWebhook}
+     * An associated webhook client, can be used to create deferred replies
+     * @type {WebhookClient}
      */
-    this.webhook = new InteractionWebhook(this.client, this.applicationID, this.token);
+    this.webhook = new WebhookClient(this.applicationID, this.token, this.client.options);
   }
 
   /**

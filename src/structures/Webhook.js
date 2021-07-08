@@ -325,7 +325,7 @@ class Webhook {
     return this.client.rest.cdn.Avatar(this.id, this.avatar, format, size);
   }
 
-  static applyToClass(structure, ignore = []) {
+  static applyToClass(structure) {
     for (const prop of [
       'send',
       'sendSlackMessage',
@@ -338,7 +338,6 @@ class Webhook {
       'createdAt',
       'url',
     ]) {
-      if (ignore.includes(prop)) continue;
       Object.defineProperty(structure.prototype, prop, Object.getOwnPropertyDescriptor(Webhook.prototype, prop));
     }
   }
